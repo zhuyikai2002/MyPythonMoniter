@@ -2,12 +2,18 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import os
+from dotenv import load_dotenv
+
+# 1. 加载本地的 .env 文件（如果有的话）
+load_dotenv()
 
 # ================= 配置区域 =================
 BLOG_URL = "https://qzkj.ltd"
-SERVER_KEY = "SCT310360TXJBC3KjVRxheEqzbSO9r6Vhm"  # <--- 记得替换！
+SERVER_KEY = os.getenv("SERVER_KEY")
 CHECK_INTERVAL = 3600  # 检测间隔，单位是秒。3600秒 = 1小时
 
+if not SERVER_KEY:
+    print("❌ 警告：未找到 SERVER_KEY！程序可能无法发送通知。")
 
 # ===========================================
 
