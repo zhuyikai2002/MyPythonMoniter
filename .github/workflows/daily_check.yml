@@ -2,17 +2,16 @@ name: Blog Monitor
 
 on:
   schedule:
-    # 每小时运行一次 (第0分钟)
     - cron: '0 * * * *'
-  # 允许你手动点击按钮触发（方便测试）
   workflow_dispatch:
 
 jobs:
   check_update:
     runs-on: ubuntu-latest
 
+    # 👇【关键点】这一块必须得有！没有它，Token 就是只读的！
     permissions:
-      contents: write  # 给这个任务“写仓库”的权限，非常重要！
+      contents: write
 
     steps:
       - name: Checkout code
@@ -36,15 +35,14 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            
+          
           git add last_title.txt
-            
-           # 判断是否有变化
+          
+          # 判断是否有变化
           if git diff --staged --quiet; then
             echo "💤 暂无变化，无需提交"
           else
             git commit -m "Update last_title record"
-            # 【终极必杀技】直接把 Token 塞进 URL 里，强行过验证
-            # 这里的 GITHUB_TOKEN 是系统自带的，不需要你手动设 Secrets
-            git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:main
+            # 既然有了上面的 permissions: write，直接 push 即可，不需要复杂的 URL
+            git push
           fi
