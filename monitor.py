@@ -15,6 +15,7 @@ CHECK_INTERVAL = 3600  # 检测间隔，单位是秒。3600秒 = 1小时
 if not SERVER_KEY:
     print("❌ 警告：未找到 SERVER_KEY！程序可能无法发送通知。")
 
+
 # ===========================================
 
 def send_wechat_msg(title, content):
@@ -38,9 +39,12 @@ def get_latest_post_title():
 
         if resp.status_code == 200:
             soup = BeautifulSoup(resp.text, 'html.parser')
-            # 这里的 .post-title-link 是Hexo常用的类名，如果抓不到需要根据实际网页修改
-            # find 只会找第一个，也就是最新的那个
-            latest_post = soup.find('a', class_='post-title-link')
+
+            # -------------------------------------------------------
+            # 【修改点】这里已经改成 article-title 了
+            # -------------------------------------------------------
+            latest_post = soup.find('a', class_='article-title')
+
             if latest_post:
                 return latest_post.text.strip()
     except Exception as e:
