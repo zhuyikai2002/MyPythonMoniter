@@ -36,6 +36,9 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          # 如果 last_title.txt 发生了变化，就提交
+          
+          # 尝试添加文件
           git add last_title.txt
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update last_title record" && git push)
+          
+          # 检查是否有变化 (如果有变化，git diff --staged --quiet 会返回失败，从而触发 || 后面的内容)
+          git diff --staged --quiet || (git commit -m "Update last_title record" && git push origin HEAD:main)
