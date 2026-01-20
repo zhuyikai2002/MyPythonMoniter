@@ -1,38 +1,54 @@
-name: Debug Push
+name: Blog Monitor
 
 on:
-  workflow_dispatch: # 只能手动触发
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 jobs:
-  debug_job:
+  check_update:
     runs-on: ubuntu-latest
+
+    # ✅ 关键权限：允许原生 Token 写仓库
     permissions:
       contents: write
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Force Update and Debug
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
         run: |
-          git config --global user.name "DebugBot"
-          git config --global user.email "debug@example.com"
+          pip install requests beautifulsoup4
+
+      - name: Run monitor script
+        env:
+          SERVER_KEY: ${{ secrets.SERVER_KEY }}
+        run: python monitor.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
           
-          # 1. 强制写入当前时间，保证文件一定变！
-          date +%s > debug_timestamp.txt
-          git add debug_timestamp.txt
-          git commit -m "Debug: Force update timestamp"
-          
-          # 2. 诊断钥匙 (只显示前两位，不泄露密码)
-          TOKEN="${{ secrets.MY_PAT }}"
-          if [ -z "$TOKEN" ]; then
-            echo "❌ 严重错误: secrets.MY_PAT 是空的！请去 Settings 检查名字是不是写错了！"
-            exit 1
+          # 👇【核心修复】先判断文件是不是真的存在！
+          if [ -f last_title.txt ]; then
+            git add last_title.txt
+            
+            # 再判断内容有没有变
+            if git diff --staged --quiet; then
+              echo "💤 暂无变化，无需提交"
+            else
+              echo "🎉 发现更新，正在提交..."
+              git commit -m "Update last_title record"
+              git push
+            fi
           else
-            echo "✅ 检测到 secrets.MY_PAT (长度: ${#TOKEN})"
-            echo "前两位是: ${TOKEN:0:2}..."
+            # 如果文件不存在，只打印警告，不报错退出（Green Exit）
+            echo "⚠️ 警告：monitor.py 没生成 last_title.txt，可能是没抓到标题，本次跳过提交。"
           fi
-          
-          # 3. 尝试推送
-          echo "🚀 正在尝试推送..."
-          git push "https://${{ secrets.MY_PAT }}@github.com/${{ github.repository }}.git" HEAD:main
