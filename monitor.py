@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import os
 
 # ================= 配置区域 =================
-BLOG_URL = "https://qzkj.ltd"
+BLOG_URL = "https://qzkj.ltd/blog"
 SERVER_KEY = os.getenv("SERVER_KEY")
 RECORD_FILE = "last_title.txt"
 
