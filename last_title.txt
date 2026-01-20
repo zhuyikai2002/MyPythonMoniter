@@ -1,1 +1,1 @@
-我原本只是想写个简历，结果顺手重构了整个网站
+目睹“魔法”的现场：我在 Mac mini 上用 Python + GitHub Actions 跑通自动化
