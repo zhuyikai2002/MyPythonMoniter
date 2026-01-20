@@ -34,11 +34,17 @@ jobs:
 
       - name: Commit and push if changed
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-          
-          # 尝试添加文件
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            
           git add last_title.txt
-          
-          # 检查是否有变化 (如果有变化，git diff --staged --quiet 会返回失败，从而触发 || 后面的内容)
-          git diff --staged --quiet || (git commit -m "Update last_title record" && git push origin HEAD:main)
+            
+           # 判断是否有变化
+          if git diff --staged --quiet; then
+            echo "💤 暂无变化，无需提交"
+          else
+            git commit -m "Update last_title record"
+            # 【终极必杀技】直接把 Token 塞进 URL 里，强行过验证
+            # 这里的 GITHUB_TOKEN 是系统自带的，不需要你手动设 Secrets
+            git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:main
+          fi
