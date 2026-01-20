@@ -33,16 +33,15 @@ jobs:
 
       - name: Commit and push if changed
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
+          git config --global user.name "Rik (Action)"
+          git config --global user.email "your_email@example.com"
+            
           git add last_title.txt
-          
-          # 判断是否有变化
+            
           if git diff --staged --quiet; then
-            echo "💤 暂无变化，无需提交"
+            echo "💤 暂无变化"
           else
-            git commit -m "Update last_title record"
-            # 既然有了上面的 permissions: write，直接 push 即可，不需要复杂的 URL
-            git push
+            git commit -m "Update last_title via PAT"
+            # 👇 核武器在这里：使用 MY_PAT 伪装成你本人进行推送
+            git push "https://${{ secrets.MY_PAT }}@github.com/${{ github.repository }}.git" HEAD:main
           fi
