@@ -1,6 +1,14 @@
 # 📡 Rik's Blog Monitor (博客更新哨兵)
 
-![GitHub Actions Status](https://github.com/zhuyikai2002/MyPythonMoniter/actions/workflows/daily_check.yml/badge.svg)
+[![GitHub Actions Status](https://github.com/zhuyikai2002/MyPythonMoniter/actions/workflows/daily_check.yml/badge.svg)](https://github.com/zhuyikai2002/MyPythonMoniter/actions)
+
+---
+
+**🌍 Languages / 语言 / 言語 / اللغات:**
+
+[English](./README_EN.md) | [简体中文](./README.md) | [日本語](./README_JA.md) | [العربية](./README_AR.md)
+
+---
 
 > 💡 从 Linux/嵌入式 C 转战 Python 自动化的里程碑之作
 
